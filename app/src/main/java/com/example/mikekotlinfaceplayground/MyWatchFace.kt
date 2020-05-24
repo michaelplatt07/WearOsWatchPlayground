@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
 import java.util.Calendar
 import java.util.TimeZone
 
-import com.example.mikekotlinfaceplayground.models.AnalogSweeping
+import com.example.mikekotlinfaceplayground.models.AnalogStyle
 
 /**
  * Handler message id for updating the time periodically in interactive mode.
@@ -57,9 +57,9 @@ private const val SHADOW_RADIUS = 6f
  */
 abstract class MyWatchFace : CanvasWatchFaceService() {
 
-    private lateinit var watchFace: AnalogSweeping
+    private lateinit var watchFace: AnalogStyle
     
-    abstract fun getWatchFaceStyle():AnalogSweeping
+    abstract fun getWatchFaceStyle():AnalogStyle
     
     override fun onCreateEngine(): Engine {
         return Engine()
@@ -109,6 +109,9 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
         private lateinit var mBackgroundBitmap: Bitmap
         private lateinit var mGrayBackgroundBitmap: Bitmap
 
+        private lateinit var mSecondHandBitmap: Bitmap
+        private lateinit var mCenterCircleBitmap: Bitmap
+	
         private var mAmbient: Boolean = false
         private var mLowBitAmbient: Boolean = false
         private var mBurnInProtection: Boolean = false
@@ -139,13 +142,31 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
         }
 
         private fun initializeBackground() {
-	    var backgroundImageEnabled = watchFace.watchBackgroundImage.backgroundImageResource != 0 // TODO(map) Again magic number that should be moved to a const file
+	    var backgroundImageEnabled = watchFace.watchImages.backgroundImageResource != 0 // TODO(map) Again magic number that should be moved to a const file
 
 	    if(backgroundImageEnabled) {
 		mBackgroundBitmap = BitmapFactory.decodeResource(
 		    resources,
-		    watchFace.watchBackgroundImage.backgroundImageResource
+		    watchFace.watchImages.backgroundImageResource
 		)
+	    }
+
+	    // TODO(map) : Maybe move this to an initialize hands method??
+	    var secondHandImageEnabled = watchFace.watchImages.secondHandImageResource != 0
+	    if (secondHandImageEnabled) {
+		mSecondHandBitmap = BitmapFactory.decodeResource(
+		    resources,
+		    watchFace.watchImages.secondHandImageResource
+		)		
+	    }
+
+	    // TODO(map) : Maybe move this to an initialize hands method??
+	    var centerCircleImageEnabled = watchFace.watchImages.centerCircleImageResource != 0
+	    if (centerCircleImageEnabled) {
+		mCenterCircleBitmap = BitmapFactory.decodeResource(
+		    resources,
+		    watchFace.watchImages.centerCircleImageResource
+		)		
 	    }
         }
 
@@ -375,6 +396,8 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
             } else {
 		canvas.drawBitmap(mBackgroundBitmap, 0f, 0f, mBackgroundPaint)
             }
+
+	    // canvas.drawBitmap(mSecondHandBitmap, mCenterX - (mSecondHandBitmap.width / 2), mCenterY - (mSecondHandBitmap.height), mBackgroundPaint)
         }
 
         private fun drawWatchFace(canvas: Canvas) {
@@ -409,6 +432,8 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
             val hourHandOffset = mCalendar.get(Calendar.MINUTE) / 2f
             val hoursRotation = mCalendar.get(Calendar.HOUR) * 30 + hourHandOffset
 
+	    val secondsBitmapRotation = seconds * 6F
+	    
             /*
              * Save the canvas state before we can begin to rotate it.
              */
@@ -436,19 +461,22 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
              */
             if (!mAmbient) {
                 canvas.rotate(secondsRotation - minutesRotation, mCenterX, mCenterY)
-                canvas.drawLine(
-                        mCenterX,
-                        mCenterY - CENTER_GAP_AND_CIRCLE_RADIUS,
-                        mCenterX,
-                        mCenterY - mSecondHandLength,
-                        mSecondPaint)
+
+		canvas.drawBitmap(
+		    mSecondHandBitmap,
+		    mCenterX - (mSecondHandBitmap.width / 2),
+		    mCenterY - mSecondHandBitmap.height,
+		    mBackgroundPaint)	    
 
             }
-            canvas.drawCircle(
-                    mCenterX,
-                    mCenterY,
-                    CENTER_GAP_AND_CIRCLE_RADIUS,
-                    mTickAndCirclePaint)
+
+
+	    canvas.drawBitmap(
+		mCenterCircleBitmap,
+		mCenterX - (mCenterCircleBitmap.width / 2),
+		mCenterY - (mCenterCircleBitmap.height / 2),
+		mBackgroundPaint
+	    )
 
             /* Restore the canvas' original orientation. */
             canvas.restore()

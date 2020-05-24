@@ -1,0 +1,53 @@
+* ---------------------------------------------------
+* - Org File for Organizing Tasks Watch Playground  -
+* ---------------------------------------------------
+
+* ----------------
+* -   Features   -
+* ----------------
+* TODO Read about and add in complications
+
+* TODO Figure out if there is a way for me to have multiple services declared so I can hot swap faces
+ 
+* DONE Get a basic watch face out and ready so I can have something decent to look at
+  CLOSED: [2020-05-23 Sat 10:24]
+
+* DONE Write some more verbose notes...to tired to do that shit right now
+  CLOSED: [2020-05-23 Sat 10:24]
+
+* TODO Clean up code and pull values from the DSL
+
+* TODO Create a 320x320 image for hdpi support
+  I may also need to create a smaller/larger image for support across different wear devices
+
+  I also need to update the manifest to use the new image when I get it up and running 
+
+* TODO Investigate optimizations
+  This includes doing stuff like simple color palattes for drawing in ambient mode, querying for data at appropriate times, etc
+
+
+* ----------------
+* - Enhancements -
+* ----------------
+
+* ----------------
+* -  Bug Report  -
+* ----------------
+
+* ----------------
+* -    UI/UX     -
+* ----------------
+
+* ----------------
+* -   Research   -
+* ----------------
+* Creating DSLs
+  To create a DSL and be able to use it:
+  1. Create the model definition in the models folder
+  2. Create all the necessary stuff in the service so there are builders and you can use the design
+  3. Create the actual model with initialized parameters that extends the abstract method from the base class
+  4. Call the method in the abstract class and store all the parameters
+
+  I can have multiple watch faces by simply declaring them in the Manifest as their own services.  It's worth 
+  noting that it looks like (but not confirmed) you CANNOT extend a dataclass multpile times, ie you can't have
+  a generic AnalogStyle that is extended to return an Analog Tic vs an Analog Sweep

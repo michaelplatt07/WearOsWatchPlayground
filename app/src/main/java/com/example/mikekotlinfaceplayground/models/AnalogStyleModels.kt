@@ -4,11 +4,11 @@ import androidx.annotation.DrawableRes
 
 const val EMPTY_IMAGE_RESOURCE = 0
 
-data class AnalogSweeping(
+data class AnalogStyle(
     val watchTicIncrement:WatchTicIncrement,
     val watchHandColors:WatchHandColors,
     val watchHandDimensions:WatchHandDimensions,
-    val watchBackgroundImage:WatchBackgroundImage
+    val watchImages:WatchImages
 )
 
 data class WatchTicIncrement(
@@ -32,6 +32,8 @@ data class WatchHandDimensions(
     val innerCircleToArmsDistance:Float
 )
 
-data class WatchBackgroundImage(
-    @DrawableRes val backgroundImageResource:Int
+data class WatchImages(
+    @DrawableRes val backgroundImageResource:Int,
+    @DrawableRes val secondHandImageResource:Int,
+    @DrawableRes val centerCircleImageResource:Int
 )

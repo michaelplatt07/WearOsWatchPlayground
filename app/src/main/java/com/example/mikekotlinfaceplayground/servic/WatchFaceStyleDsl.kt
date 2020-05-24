@@ -2,11 +2,11 @@ package com.example.mikekotlinfaceplayground.servic
 
 import android.graphics.Color
 
-import com.example.mikekotlinfaceplayground.models.AnalogSweeping
+import com.example.mikekotlinfaceplayground.models.AnalogStyle
 import com.example.mikekotlinfaceplayground.models.WatchHandColors
 import com.example.mikekotlinfaceplayground.models.WatchHandDimensions
 import com.example.mikekotlinfaceplayground.models.WatchTicIncrement
-import com.example.mikekotlinfaceplayground.models.WatchBackgroundImage
+import com.example.mikekotlinfaceplayground.models.WatchImages
 
 @DslMarker
 annotation class WatchFaceStyleDSL
@@ -82,26 +82,30 @@ class WatchHandDimensionsBuilder {
 }
 
 @WatchFaceStyleDSL
-class WatchBackgroundImageBuilder {
+class WatchImagesBuilder {
     private val attributesMap: MutableMap<String, Any?> = mutableMapOf(
-        "backgroundImageResource" to 0 // TODO(map) This is a magic number for if an image isn't provided
+        "backgroundImageResource" to 0, // TODO(map) This is a magic number for if an image isn't provided
+	"secondHandImageResource" to 0,
+	"centerCircleImageResource" to 0
     )
 
     var backgroundImageResource:Int by attributesMap
+    var secondHandImageResource:Int by attributesMap
+    var centerCircleImageResource:Int by attributesMap
 
-    fun build(): WatchBackgroundImage {
-        return WatchBackgroundImage(backgroundImageResource)
+    fun build(): WatchImages {
+        return WatchImages(backgroundImageResource, secondHandImageResource, centerCircleImageResource)
     }
 }
 
 @WatchFaceStyleDSL
-class AnalogSweepingBuilder {
+class AnalogStyleBuilder {
 
     private var watchTicIncrement: WatchTicIncrement? = null
     private var watchHandColors: WatchHandColors? = null
     private var watchHandDimensions: WatchHandDimensions? = null
-    private var watchBackgroundImage: WatchBackgroundImage =
-        WatchBackgroundImageBuilder().build()
+    private var watchImages: WatchImages =
+        WatchImagesBuilder().build()
 
     fun watchTicIncrement(setup: WatchTicIncrementBuilder.() -> Unit) {
 	val watchTicIncrementBuilder = WatchTicIncrementBuilder()
@@ -121,14 +125,14 @@ class AnalogSweepingBuilder {
         watchHandDimensions = watchHandDimensionsBuilder.build()
     }
     
-    fun watchBackgroundImage(setup: WatchBackgroundImageBuilder.() -> Unit) {
-        val watchBagroundImageBuilder = WatchBackgroundImageBuilder()
+    fun watchImages(setup: WatchImagesBuilder.() -> Unit) {
+        val watchBagroundImageBuilder = WatchImagesBuilder()
         watchBagroundImageBuilder.setup()
-        watchBackgroundImage = watchBagroundImageBuilder.build()
+        watchImages = watchBagroundImageBuilder.build()
     }
 
 
-    fun build(): AnalogSweeping {
+    fun build(): AnalogStyle {
 
 	val watchTicIncrementArgument = watchTicIncrement ?:
 	    throw IllegalStateException("Must define a tic interval")
@@ -139,8 +143,8 @@ class AnalogSweepingBuilder {
 	val watchHandDimensionsArgument = watchHandDimensions ?:
 	    throw IllegalStateException("Must define a watchHandDimensions")
 
-        return AnalogSweeping(
-	    watchTicIncrementArgument, watchHandColorsArgument, watchHandDimensionsArgument, watchBackgroundImage
+        return AnalogStyle(
+	    watchTicIncrementArgument, watchHandColorsArgument, watchHandDimensionsArgument, watchImages
         )
     }
 
@@ -155,8 +159,8 @@ class AnalogSweepingBuilder {
 }
 
 @WatchFaceStyleDSL
-fun analogSweeping (setup: AnalogSweepingBuilder.() -> Unit): AnalogSweeping {
-    val analogSweepingBuilder = AnalogSweepingBuilder()
-    analogSweepingBuilder.setup()
-    return analogSweepingBuilder.build()
+fun analogStyle (setup: AnalogStyleBuilder.() -> Unit): AnalogStyle {
+    val analogStyleBuilder = AnalogStyleBuilder()
+    analogStyleBuilder.setup()
+    return analogStyleBuilder.build()
 }
