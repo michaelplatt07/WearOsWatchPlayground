@@ -432,8 +432,6 @@ abstract class MyWatchFace : CanvasWatchFaceService() {
             val hourHandOffset = mCalendar.get(Calendar.MINUTE) / 2f
             val hoursRotation = mCalendar.get(Calendar.HOUR) * 30 + hourHandOffset
 
-	    val secondsBitmapRotation = seconds * 6F
-	    
             /*
              * Save the canvas state before we can begin to rotate it.
              */
